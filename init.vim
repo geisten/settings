@@ -71,6 +71,9 @@ Plug 'jelera/vim-javascript-syntax'
 
 Plug 'rhysd/vim-grammarous'
 
+Plug 'mattn/calendar-vim'
+Plug 'vimwiki/vimwiki'
+
 
 call plug#end()
 "
@@ -483,3 +486,8 @@ nmap <Leader>C :ClangFormatAutoToggle<CR>
 
 " Use deoplete.
 let g:deoplete#enable_at_startup = 1
+
+" Set Vimwiki locations
+let g:vimwiki_list = [
+            \{'path': '~/workspace/gcore/docs/wiki.wiki'}
+            \]
