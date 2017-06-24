@@ -29,7 +29,10 @@ if exists('make')
 endif
 Plug 'Shougo/vimproc.vim', {'do': g:make}
 Plug 'Shougo/deoplete.nvim'
+Plug 'Shougo/neoinclude.vim'
 Plug 'zchee/deoplete-jedi'
+Plug 'zchee/deoplete-clang'
+Plug 'SevereOverfl0w/deoplete-github'
 Plug 'scrooloose/nerdcommenter'
 
 "" Vim-Session
@@ -486,6 +489,16 @@ nmap <Leader>C :ClangFormatAutoToggle<CR>
 
 " Use deoplete.
 let g:deoplete#enable_at_startup = 1
+let g:deoplete#sources#clang#libclang_path = '/usr/local/Cellar/llvm/4.0.0_1/lib/libclang.dylib'
+let g:deoplete#sources#clang#clang_header = '/usr/local/Cellar/llvm/4.0.0_1/lib/clang'
+let g:deoplete#sources = {}
+let g:deoplete#sources.gitcommit=['github']
+let g:deoplete#keyword_patterns={}
+let g:deoplete#keyword_patterns.gitcommit = '.+'
+
+"call deoplete#util#set_pattern(
+"\ g:deoplete#omni#input_patterns,
+"\ 'gitcommit', [g:deoplete#keyword_patterns.gitcommit])
 
 " Set Vimwiki locations
 let g:vimwiki_list = [
