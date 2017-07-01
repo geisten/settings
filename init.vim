@@ -35,6 +35,10 @@ Plug 'zchee/deoplete-clang'
 Plug 'SevereOverfl0w/deoplete-github'
 Plug 'scrooloose/nerdcommenter'
 
+Plug 'ternjs/tern_for_vim', { 'for': ['javascript', 'javascript.jsx'] }
+Plug 'carlitux/deoplete-ternjs', { 'for': ['javascript', 'javascript.jsx'] }
+Plug 'othree/jspc.vim', { 'for': ['javascript', 'javascript.jsx'] }
+
 "" Vim-Session
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-session'
@@ -261,7 +265,7 @@ if !exists('*s:setupWrapping')
     function s:setupWrapping()
         set wrap
         set wm=2
-        set textwidth=79
+        set textwidth=99
     endfunction
 endif
 
@@ -471,6 +475,9 @@ let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+let g:ale_linters = {
+            \   'javascript': ['eslint'],
+            \}
 
 " clang formatter
 let g:clang_format#style_options = {
@@ -496,6 +503,17 @@ let g:deoplete#sources.gitcommit=['github']
 let g:deoplete#keyword_patterns={}
 let g:deoplete#keyword_patterns.gitcommit = '.+'
 
+let g:deoplete#omni#functions = {}
+let g:deoplete#omni#functions.javascript = [
+            \ 'tern#Complete',
+            \ 'jspc#omni'
+            \]
+
+set completeopt=longest,menuone,preview
+let g:deoplete#sources = {}
+let g:deoplete#sources['javascript.jsx'] = ['file', 'ultisnips', 'ternjs']
+let g:tern#command = ['tern']
+let g:tern#arguments = ['--persistent']
 "call deoplete#util#set_pattern(
 "\ g:deoplete#omni#input_patterns,
 "\ 'gitcommit', [g:deoplete#keyword_patterns.gitcommit])
