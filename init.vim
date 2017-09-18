@@ -8,31 +8,37 @@ call plug#begin(expand('~/.config/nvim/plugged'))
 "*****************************************************************************
 "" Plug install packages
 "*****************************************************************************
-Plug 'tpope/vim-fugitive'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'vim-scripts/grep.vim'
+
+" Completions and snippets
+Plug 'Shougo/neoinclude.vim'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'wokalski/autocomplete-flow'
+Plug 'zchee/deoplete-jedi', {'for': 'python'}
+Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+Plug 'zchee/deoplete-clang'
+Plug 'jiangmiao/auto-pairs'
+Plug 'Shougo/neosnippet'
+Plug 'Shougo/neosnippet-snippets'
+
+" Helpers
 Plug 'bronson/vim-trailing-whitespace'
-Plug 'Raimondi/delimitMate'
+Plug 'junegunn/fzf', {'dir': '~/.fzf', 'do': './install --all'}
+Plug 'junegunn/fzf.vim'
+
+" IDE
+Plug 'tpope/vim-fugitive'
 Plug 'majutsushi/tagbar'
-Plug 'Yggdroot/indentLine'
-Plug 'sheerun/vim-polyglot'
 Plug 'tpope/vim-surround'
-Plug 'rhysd/vim-clang-format'
 Plug 'w0rp/ale'
+Plug 'scrooloose/nerdcommenter'
 
 let g:make = 'gmake'
 if exists('make')
     let g:make = 'make'
 endif
-Plug 'Shougo/vimproc.vim', {'do': g:make}
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'Shougo/neoinclude.vim'
-Plug 'zchee/deoplete-jedi'
-Plug 'zchee/deoplete-clang'
-Plug 'SevereOverfl0w/deoplete-github'
-Plug 'scrooloose/nerdcommenter'
 
-Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+" Run unit tests embedded
+Plug 'janko-m/vim-test'
 
 
 "" Vim-Session
@@ -41,10 +47,6 @@ Plug 'xolox/vim-session'
 
 Plug 'Shougo/vimshell.vim'
 
-"" Snippets
-Plug 'SirVer/ultisnips'
-Plug 'FelikZ/ctrlp-py-matcher'
-Plug 'honza/vim-snippets'
 
 "" Color
 Plug 'tomasr/molokai'
@@ -71,13 +73,16 @@ Plug 'mattn/emmet-vim'
 
 " javascript
 "" Javascript Bundle
-Plug 'jelera/vim-javascript-syntax'
+Plug 'pangloss/vim-javascript'
 
 Plug 'rhysd/vim-grammarous'
 
 Plug 'mattn/calendar-vim'
 Plug 'vimwiki/vimwiki'
 
+"Markdown
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
 
 call plug#end()
 "
@@ -177,11 +182,11 @@ syntax on
 set ruler
 set number
 
+hi ALEErrorSign ctermfg=red ctermbg=none
+hi ALEWarningSign ctermfg=yellow ctermbg=none
 let no_buffers_menu=1
-if !exists('g:not_finish_vimplug')
-    colorscheme tender
-endif
-
+colorscheme gruvbox
+set background=dark
 set mousemodel=popup
 set t_Co=256
 set guioptions=egmrti
@@ -228,6 +233,7 @@ endif
 "gruvbox
 let g:gruvbox_italic=1
 set termguicolors
+set termencoding=utf-8
 
 "*****************************************************************************
 "" Abbreviations
@@ -320,11 +326,6 @@ nnoremap <leader>ss :SaveSession<Space>
 nnoremap <leader>sd :DeleteSession<CR>
 nnoremap <leader>sc :CloseSession<CR>
 
-"" Tabs
-nnoremap <Tab> gt
-nnoremap <S-Tab> gT
-nnoremap <silent> <S-t> :tabnew<CR>
-
 "" Set working directory
 nnoremap <leader>. :lcd %:p:h<CR>
 
@@ -334,32 +335,18 @@ noremap <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
 "" Opens a tab edit command with the path of the currently edited file filled
 noremap <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
-"" ctrlp.vim
-set wildmode=list:longest,list:full
-set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
-let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist)|(\.(swp|tox|ico|git|hg|svn))$'
-let g:ctrlp_user_command = "find %s -type f | grep -Ev '"+ g:ctrlp_custom_ignore +"'"
-let g:ctrlp_use_caching = 1
+" vim-tests
+nmap <silent> <leader>t :TestNearest<CR>
+nmap <silent> <leader>T :TestFile<CR>
+nmap <silent> <leader>a :TestSuite<CR>
+nmap <silent> <leader>l :TestLast<CR>
+nmap <silent> <leader>g :TestVisit<CR>
 
-" The Silver Searcher
-if executable('ag')
-    set grepprg=ag\ --nogroup\ --nocolor
-    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-    let g:ctrlp_use_caching = 0
-endif
+" make test commands execute using neovim terminal
+let test#strategy = "neovim"
+let test#javascript#mocha#options = '--compilers js:babel-core/register'
 
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
-noremap <leader>b :CtrlPBuffer<CR>
-let g:ctrlp_map = '<leader>e'
-let g:ctrlp_open_new_file = 'r'
-let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
-
-" snippets
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<c-b>"
-let g:UltiSnipsEditSplit="vertical"
-
 
 " Tagbar
 nmap <silent> <F4> :TagbarToggle<CR>
@@ -437,12 +424,6 @@ autocmd Filetype html setlocal ts=2 sw=2 expandtab
 " javascript
 let g:javascript_enable_domhtmlcss = 1
 
-" vim-javascript
-augroup vimrc-javascript
-    autocmd!
-    autocmd FileType javascript set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4 smartindent
-augroup END
-
 
 " python
 " vim-python
@@ -451,7 +432,6 @@ augroup vimrc-python
     autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8 colorcolumn=79
                 \ formatoptions+=croq softtabstop=4 smartindent
                 \ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
-    au BufWrite * :Autoformat
 augroup END
 
 " Syntax highlight
@@ -477,13 +457,23 @@ let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-let g:ale_linters = {
-            \   'javascript': ['eslint'],
-            \}
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '⚠'
 
-" Set this setting in vimrc if you want to fix files automatically on save.
+" Put this in vimrc or a plugin file of your own.
+" After this is configured, :ALEFix will try and fix your JS code with ESLint.
+let g:ale_fixers = {
+\   'javascript': ['prettier'],
+\}
+
 " This is off by default.
 let g:ale_fix_on_save = 1
+
+let g:ale_linters = {
+\   'javascript': ['eslint'],
+\}
+
+let g:ale_javascript_prettier_options = '--tab-width 4 --print-width 100 '
 
 " clang formatter
 let g:clang_format#style_options = {
@@ -501,13 +491,15 @@ autocmd FileType c,cpp,objc map <buffer><Leader>x <Plug>(operator-clang-format)
 nmap <Leader>C :ClangFormatAutoToggle<CR>
 
 " Use deoplete.
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#sources#clang#libclang_path = '/usr/local/Cellar/llvm/4.0.0_1/lib/libclang.dylib'
 let g:deoplete#sources#clang#clang_header = '/usr/local/Cellar/llvm/4.0.0_1/lib/clang'
 let g:deoplete#sources = {}
-let g:deoplete#sources.gitcommit=['github']
 let g:deoplete#keyword_patterns={}
-let g:deoplete#keyword_patterns.gitcommit = '.+'
 
 " Set bin if you have many instalations
 "let g:deoplete#sources#ternjs#tern_bin = '/path/to/tern_bin'
@@ -528,11 +520,11 @@ let g:deoplete#sources#ternjs#docs = 1
 " When on, only completions that match the current word at the given point will
 " be returned. Turn this off to get all results, so that you can filter on the
 " client side. Default: 1
-let g:deoplete#sources#ternjs#filter = 0
+let g:deoplete#sources#ternjs#filter = 1
 
 " Whether to use a case-insensitive compare between the current word and
 " potential completions. Default 0
-let g:deoplete#sources#ternjs#case_insensitive = 1
+let g:deoplete#sources#ternjs#case_insensitive = 0
 
 " When completing a property and no completions are found, Tern will use some
 " heuristics to try and return some properties anyway. Set this to 0 to
@@ -556,7 +548,7 @@ let g:deoplete#sources#ternjs#omit_object_prototype = 0
 let g:deoplete#sources#ternjs#include_keywords = 1
 
 " If completions should be returned when inside a literal. Default: 1
-let g:deoplete#sources#ternjs#in_literal = 0
+let g:deoplete#sources#ternjs#in_literal = 1
 
 
 "Add extra filetypes
@@ -565,10 +557,32 @@ let g:deoplete#sources#ternjs#filetypes = [
             \ 'javascript.jsx',
             \ 'vue'
             \ ]
+
+" neosnippet
+
+let g:neosnippet#enable_completed_snippet = 1
+
+
+
 "call deoplete#util#set_pattern(
 "\ g:deoplete#omni#input_patterns,
 "\ 'gitcommit', [g:deoplete#keyword_patterns.gitcommit])
 
+"Javascript syntax highlighting
+let g:javascript_conceal_function             = "ƒ"
+let g:javascript_conceal_null                 = "ø"
+let g:javascript_conceal_this                 = "@"
+let g:javascript_conceal_return               = "⇚"
+let g:javascript_conceal_undefined            = "¿"
+let g:javascript_conceal_NaN                  = "ℕ"
+let g:javascript_conceal_prototype            = "¶"
+let g:javascript_conceal_static               = "•"
+let g:javascript_conceal_super                = "Ω"
+let g:javascript_conceal_arrow_function       = "⇒"
+
+let g:javascript_plugin_jsdoc = 1
+let g:javascript_plugin_flow = 1
+set conceallevel=1
 " Set Vimwiki locations
 let g:vimwiki_list = [
             \{'path': '~/workspace/gcore/docs/wiki.wiki'}
