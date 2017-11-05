@@ -70,6 +70,16 @@ Plug 'gorodinskiy/vim-coloresque'
 Plug 'tpope/vim-haml'
 Plug 'mattn/emmet-vim'
 
+"  RUST
+Plug 'rust-lang/rust.vim'
+"Plug 'racer-rust/vim-racer'
+Plug 'sebastianmarkow/deoplete-rust'
+
+" Python
+Plug 'python-mode/python-mode'
+
+" TOML
+Plug 'cespare/vim-toml'
 
 " javascript
 "" Javascript Bundle
@@ -79,6 +89,8 @@ Plug 'rhysd/vim-grammarous'
 
 Plug 'mattn/calendar-vim'
 Plug 'vimwiki/vimwiki'
+Plug 'ternjs/tern_for_vim'
+Plug 'mxw/vim-jsx'
 
 "Markdown
 Plug 'godlygeek/tabular'
@@ -464,6 +476,8 @@ let g:ale_sign_warning = '⚠'
 " After this is configured, :ALEFix will try and fix your JS code with ESLint.
 let g:ale_fixers = {
 \   'javascript': ['prettier'],
+\   'rust':['rustfmt'],
+\   'python':['pycodestyle', 'pylint']
 \}
 
 " This is off by default.
@@ -471,8 +485,11 @@ let g:ale_fix_on_save = 1
 
 let g:ale_linters = {
 \   'javascript': ['eslint'],
+\   'rust': ['rls'],
+\   'python':['yapf']
 \}
 
+let g:ale_rust_rls_executable='rs'
 let g:ale_javascript_prettier_options = '--tab-width 4 --print-width 100 '
 
 " clang formatter
@@ -582,8 +599,31 @@ let g:javascript_conceal_arrow_function       = "⇒"
 
 let g:javascript_plugin_jsdoc = 1
 let g:javascript_plugin_flow = 1
+
+let g:jsx_ext_required = 0
+
 set conceallevel=1
 " Set Vimwiki locations
 let g:vimwiki_list = [
             \{'path': '~/workspace/gcore/docs/wiki.wiki'}
             \]
+
+"Rust settings
+set hidden
+let g:deoplete#sources#rust#racer_binary='/Users/germar/.cargo/bin/racer'
+let g:deoplete#sources#rust#rust_source_path='Users/germar/workspace/rust/src'
+
+" Show duplicate matches.
+let g:deoplete#sources#rust#show_duplicates=1
+" To disable default key mappings (gd & K) add the following
+let g:deoplete#sources#rust#disable_keymap=1
+" Set max height of documentation split.
+let g:deoplete#sources#rust#documentation_max_height=20
+
+au FileType rust nmap gd <Plug>(rust-def)
+au FileType rust nmap gs <Plug>(rust-def-split)
+au FileType rust nmap gx <Plug>(rust-def-vertical)
+au FileType rust nmap <leader>gd <Plug>(rust-doc)
+
+" Python settings
+let g:pymode_python = 'python3'
