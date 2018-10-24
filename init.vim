@@ -19,6 +19,7 @@ Plug 'zchee/deoplete-clang'
 Plug 'jiangmiao/auto-pairs'
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
+Plug 'tpope/vim-vinegar'
 
 " Helpers
 Plug 'bronson/vim-trailing-whitespace'
@@ -27,10 +28,15 @@ Plug 'junegunn/fzf.vim'
 
 " IDE
 Plug 'tpope/vim-fugitive'
+Plug 'idanarye/vim-merginal'
+Plug 'airblade/vim-gitgutter'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-surround'
 Plug 'w0rp/ale'
 Plug 'scrooloose/nerdcommenter'
+Plug 'itchyny/lightline.vim'
+"Plug 'minhinz/vim-startify'
+Plug 'posva/vim-vue'
 
 let g:make = 'gmake'
 if exists('make')
@@ -44,7 +50,6 @@ Plug 'janko-m/vim-test'
 "" Vim-Session
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-session'
-
 Plug 'Shougo/vimshell.vim'
 
 
@@ -96,10 +101,15 @@ Plug 'mxw/vim-jsx'
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
 
+Plug 'ryanoasis/vim-devicons'
 call plug#end()
 "
 "*****************************************************************************
 "*****************************************************************************
+
+" VIM-DEVICONS
+
+let g:airline_powerline_fonts=1
 
 " FINDING FILES:
 
@@ -202,16 +212,16 @@ set background=dark
 set mousemodel=popup
 set t_Co=256
 set guioptions=egmrti
-set gfn=Monospace\ 10
+"set gfn=Monospace\ 10
+set guifont=DroidSansMono\ Nerd\ Font:h11
 
 if has("gui_running")
     if has("gui_mac") || has("gui_macvim")
-        set guifont=Menlo:h12
+        set guifont=DroidSansMono\ Nerd\ Font:h11
         set transparency=7
     endif
 else
     let g:CSApprox_loaded = 1
-
     " IndentLine
     let g:indentLine_enabled = 1
     let g:indentLine_concealcursor = 0
@@ -312,6 +322,7 @@ augroup vimrc-make-cmake
     autocmd BufNewFile,BufRead CMakeLists.txt setlocal filetype=cmake
 augroup END
 
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 set autoread
 
 "*****************************************************************************
@@ -477,7 +488,8 @@ let g:ale_sign_warning = '⚠'
 let g:ale_fixers = {
 \   'javascript': ['prettier'],
 \   'rust':['rustfmt'],
-\   'python':['pycodestyle', 'pylint']
+\   'python':['autopep8'],
+\   'c': ['clang-format']
 \}
 
 " This is off by default.
@@ -486,12 +498,15 @@ let g:ale_fix_on_save = 1
 let g:ale_linters = {
 \   'javascript': ['eslint'],
 \   'rust': ['rls'],
-\   'python':['yapf']
+\   'python':['yapf'],
+\   'c':['cppcheck']
 \}
 
 let g:ale_rust_rls_executable='rs'
 let g:ale_javascript_prettier_options = '--tab-width 4 --print-width 100 '
 
+let g:ale_c_clangformat_options = '-style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100, AllowShortFunctionsOnASingleLine: None, KeepEmptyLinesAtTheStartOfBlocks: false}"'
+'
 " clang formatter
 let g:clang_format#style_options = {
             \ "AccessModifierOffset" : -4,
@@ -513,10 +528,11 @@ smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 xmap <C-k>     <Plug>(neosnippet_expand_target)
 
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#sources#clang#libclang_path = '/usr/local/Cellar/llvm/4.0.0_1/lib/libclang.dylib'
-let g:deoplete#sources#clang#clang_header = '/usr/local/Cellar/llvm/4.0.0_1/lib/clang'
-let g:deoplete#sources = {}
-let g:deoplete#keyword_patterns={}
+let g:deoplete#sources#clang#libclang_path = '/usr/local/opt/llvm/lib/libclang.dylib'
+let g:deoplete#sources#clang#clang_header = '/usr/local/opt/llvm/lib/clang'
+let g:deoplete#sources#clang#sort_algo = 'priority'
+"let g:deoplete#sources = {}
+"let g:deoplete#keyword_patterns={}
 
 " Set bin if you have many instalations
 "let g:deoplete#sources#ternjs#tern_bin = '/path/to/tern_bin'
@@ -576,7 +592,6 @@ let g:deoplete#sources#ternjs#filetypes = [
             \ ]
 
 " neosnippet
-
 let g:neosnippet#enable_completed_snippet = 1
 
 
@@ -627,3 +642,5 @@ au FileType rust nmap <leader>gd <Plug>(rust-doc)
 
 " Python settings
 let g:pymode_python = 'python3'
+let g:python_host_prog = '/usr/local/bin/python2'
+let g:python3_host_prog = '/usr/local/bin/python3'
